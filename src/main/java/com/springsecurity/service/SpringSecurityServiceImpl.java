@@ -41,17 +41,24 @@ public class SpringSecurityServiceImpl implements SpringSecurityService {
 	}
 
 	@Override
-	public int updateUserData(UserData userData) {
+	public boolean updateUserData(UserData userData) {
+		boolean userBoolean = springSecurityDao.existsById(userData.getUserId());
+		if(userBoolean)
+		{
 		userData.setPassword(bCryptPasswordEncoder.encode(userData.getPassword()));
-		int userId = springSecurityDao.save(userData).getUserId();
-		
-		return userId;
+		springSecurityDao.save(userData);
+		}
+		return userBoolean;
 	}
 
 	@Override
-	public void deleteUserDataById(int userId) {
-
+	public boolean deleteUserDataById(int userId) {
+		boolean userBoolean = springSecurityDao.existsById(userId);
+		if(userBoolean)
+		{
 		springSecurityDao.deleteById(userId);
+		}
+		return userBoolean;
 	}
 
 }

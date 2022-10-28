@@ -24,7 +24,7 @@ public class SecurityUserDetails implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		Optional<UserData> userData = springSecurityDao.findUserByUserName(username);
-		if(userData.isEmpty())
+		if (!userData.isPresent())
 		{
 			throw new UsernameNotFoundException("User is Not Avaliable"+username);
 		}

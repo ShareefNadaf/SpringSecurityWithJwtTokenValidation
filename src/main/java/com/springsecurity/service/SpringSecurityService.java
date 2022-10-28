@@ -10,6 +10,6 @@ public interface SpringSecurityService {
 	int saveUserData(UserData userData);
 	Optional<UserData> getUserDataById(int userId); 
 	List<UserData> getAllUserData();
-	int updateUserData(UserData userData);
-	void deleteUserDataById(int userId);
+	boolean updateUserData(UserData userData);
+	boolean deleteUserDataById(int userId);
 }

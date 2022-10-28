@@ -29,6 +29,7 @@ public class SpringSecurityController {
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private JwtToken jwtToken;
+	private static final String errMessage = "User Not Found!";
 	
 	@PostMapping("/save")
 	public ResponseEntity<String> saveUserData(@RequestBody UserData userData)
@@ -41,9 +42,9 @@ public class SpringSecurityController {
 	public ResponseEntity<Object> getUserDataByUserId(@PathVariable int userId)
 	{
 		Optional<UserData> userData =springSecurityService.getUserDataById(userId);
-		if(userData.isEmpty())
+		if(!userData.isPresent())
 		{
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found!");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errMessage);
 		}
 		
 		return ResponseEntity.ok(userData);
@@ -59,29 +60,24 @@ public class SpringSecurityController {
 	@PutMapping("/updateuser")
 	public ResponseEntity<String> updateUserData(@RequestBody UserData userData)
 	{
-		 int id = userData.getUserId();
-		 Optional<UserData> userDetail =springSecurityService.getUserDataById(id);
-		 if(userDetail.isEmpty())
+		 boolean updatedUserData = springSecurityService.updateUserData(userData);
+		 
+		 if(updatedUserData)
 		 {  
-			  return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found!");
+			 return ResponseEntity.ok("UserData '"+userData.getUserId()+"' Successfuly Updated.");
 		 }
-		 int userId = springSecurityService.updateUserData(userData);
-		
-		return ResponseEntity.ok("UserData '"+userId+"' Successfuly Updated!");
+		 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errMessage);
 	}
 	
 	@DeleteMapping("/deleteuser/{userId}")
 	public ResponseEntity<String> deleteUserById(@PathVariable int userId)
 	{
-		
-		  Optional<UserData> userData =springSecurityService.getUserDataById(userId);
-		  if(userData.isEmpty())
+		 boolean deletedUser = springSecurityService.deleteUserDataById(userId);
+		  if(deletedUser)
 		  {  
-			  return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found!");
+			  return ResponseEntity.ok("User '"+userId+"' Deleted Successfuly!");
 		  }
-		  springSecurityService.deleteUserDataById(userId);
-		
-		return ResponseEntity.ok("UserData Deleted Successfuly!");
+		  return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errMessage);
 	}
 	
 	@PostMapping("/login")
